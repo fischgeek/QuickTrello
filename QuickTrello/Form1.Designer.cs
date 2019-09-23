@@ -27,6 +27,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.label1 = new System.Windows.Forms.Label();
             this.txtTitle = new System.Windows.Forms.TextBox();
             this.lblDescription = new System.Windows.Forms.Label();
@@ -156,6 +157,7 @@
             this.Controls.Add(this.lblDescription);
             this.Controls.Add(this.txtTitle);
             this.Controls.Add(this.label1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "MainForm";
             this.Text = "Quick Trello";
             this.Load += new System.EventHandler(this.MainForm_Load);
