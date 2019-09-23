@@ -16,41 +16,192 @@ namespace QuickTrello
     {
         private string token = ConfigurationManager.AppSettings["trelloapitoken"];
         private string key = ConfigurationManager.AppSettings["trelloapikey"];
-        private string listId = ConfigurationManager.AppSettings["defaultlist"];
+        private string defaultlist = ConfigurationManager.AppSettings["defaultlist"];
+        private bool firstRun = true;
+        private bool trelloIsValid = false;
+
         public MainForm()
         {
             InitializeComponent();
+            txtTitle.KeyDown += new KeyEventHandler(CheckForCtrlEnter);
+            txtTitle.KeyUp += new KeyEventHandler(CheckTitleForTab);
+            txtTitle.KeyPress += new KeyPressEventHandler(Silence);
+            txtDescription.KeyDown += new KeyEventHandler(CheckForCtrlEnter);
+            txtDescription.KeyUp += new KeyEventHandler(CheckDescriptionForTab);
+            txtDescription.KeyPress += new KeyPressEventHandler(Silence);
+            txtLabels.KeyDown += new KeyEventHandler(CheckForCtrlEnter);
+            txtLabels.KeyUp += new KeyEventHandler(CheckLabelsForTab);
+            txtLabels.KeyPress += new KeyPressEventHandler(Silence);
+            this.KeyDown += new KeyEventHandler(CheckForCtrlEnter);
+            AdjustHeight(HeightStep.One);
         }
 
-        private void BtnSubmit_Click(object sender, EventArgs e)
+        private void MainForm_Load(object sender, EventArgs e)
         {
-            lblResult.Text = "Submitting...";
+            ShowDescription(false);
+            ShowLabels(false);
+            ShowAttachments(false);
+            this.Refresh();
+            this.ActiveControl = txtTitle;
+            ValidateTrello();
+        }
+
+        private void Submit()
+        {
+            if (!trelloIsValid) {
+                ShowFeedback("Missing requirements.");
+                return;
+            }
+            ShowFeedback("Submitting...");
             var tb = FireUpTrello();
             var card = new TrelloCard() {
                 name = txtTitle.Text
                 , desc = txtDescription.Text
             };
-            var res = tb.AddCard(card, listId);
+            var res = tb.AddCard(card, defaultlist);
             if (res.Successful) {
-                lblResult.ForeColor = Color.Green;
-                lblResult.Text = "New card created successfully!";
+                ShowFeedback("New card created successfully!", MessageType.Success);
             } else {
-                lblResult.ForeColor = Color.Red;
-                lblResult.Text = "Failed to create new card.";
+                ShowFeedback("Failed to create new card.", MessageType.Error);
             }
-            this.Refresh();
             System.Threading.Thread.Sleep(3000);
             this.Close();
         }
 
+        private void ValidateTrello()
+        {
+            if (key == null) {
+                ShowFeedback("Missing API Key", MessageType.Error);
+            } else if (token == null) {
+                ShowFeedback("Missing API Token", MessageType.Error);
+            } else if (defaultlist == null) {
+                ShowFeedback("Default List has not been set", MessageType.Error);
+            } else {
+                trelloIsValid = true;
+            }
+        }
+
         private TrelloBase FireUpTrello()
         {
-            if (key == null || token == null) {
-                throw new Exception("missing api key or token.");
-            }
             var tb = TrelloBase.GetInstance();
             tb.Init(key, token);
             return tb;
         }
+
+        private void ShowDescription(bool show = true)
+        {
+            lblDescription.Visible = show;
+            txtDescription.Visible = show;
+        }
+
+        private void ShowLabels(bool show = true)
+        {
+            lblLabels.Visible = show;
+            txtLabels.Visible = show;
+        }
+
+        private void ShowAttachments(bool show = true)
+        {
+            lblAttachments.Visible = show;
+            pnlAttachments.Visible = show;
+        }
+
+        private void CheckForCtrlEnter(object sender, KeyEventArgs e)
+        {
+            if (e.Modifiers == Keys.Control && e.KeyCode == Keys.Return) {
+                Submit();
+                Console.WriteLine("Submit!");
+            }
+        }
+
+        private void CheckTitleForTab(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Tab) {
+                ShowDescription();
+                txtDescription.Focus();
+                AdjustHeight(HeightStep.Two);
+            }
+        }
+
+        private void CheckDescriptionForTab(object sender, KeyEventArgs e)
+        {
+            e.Handled = true;
+            e.SuppressKeyPress = true;
+            if (e.Modifiers == Keys.Shift && e.KeyCode == Keys.Tab) {
+                txtTitle.Focus();
+            } else if (e.KeyCode == Keys.Tab) {
+                ShowLabels();
+                txtLabels.Focus();
+                AdjustHeight(HeightStep.Three);
+            }
+            
+        }
+
+        private void CheckLabelsForTab(object sender, KeyEventArgs e)
+        {
+            e.Handled = true;
+            e.SuppressKeyPress = true;
+            if (e.Modifiers == Keys.Shift && e.KeyCode == Keys.Tab) {
+                txtDescription.Focus();
+            } else if (e.KeyCode == Keys.Tab) {
+                ShowAttachments();
+                txtTitle.Focus();
+                AdjustHeight(HeightStep.Four);
+            }
+        }
+
+        private void Silence(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == (char)Keys.Tab) {
+                e.Handled = true;
+            }
+        }
+
+        private void AdjustHeight(HeightStep step)
+        {
+            var h = (int)step;
+            if (this.firstRun) {
+                this.Size = new Size(this.Size.Width, h);
+                this.firstRun = false;
+            } else if (this.Size.Height < h) {
+                this.Size = new Size(this.Size.Width, h);
+            }
+        }
+
+        private void ShowFeedback(string message, MessageType messageType = MessageType.Default)
+        {
+            var bClr = Color.White;
+            var fClr = Color.Black;
+            switch (messageType) {
+                case MessageType.Success:
+                    fClr = Color.Green;
+                    break;
+                case MessageType.Error:
+                    fClr = Color.Crimson;
+                    break;
+                default:
+                    break;
+            }
+            lblResult.Text = message;
+            lblResult.ForeColor = fClr;
+            lblResult.BackColor = bClr;
+            this.Refresh();
+        }
+    }
+
+    public enum MessageType
+    {
+        Default,
+        Success,
+        Error
+    }
+
+    public enum HeightStep
+    {
+        One = 135,
+        Two = 300,
+        Three = 360,
+        Four = 500,
+        Default = 500
     }
 }
