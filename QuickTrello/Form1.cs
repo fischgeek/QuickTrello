@@ -1,9 +1,11 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Configuration;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,9 +16,8 @@ namespace QuickTrello
 {
     public partial class MainForm : Form
     {
-        private string token = ConfigurationManager.AppSettings["trelloapitoken"];
-        private string key = ConfigurationManager.AppSettings["trelloapikey"];
-        private string defaultlist = ConfigurationManager.AppSettings["defaultlist"];
+        private string settingsFile = "trello_config.json";
+        LocalTrelloSettings settings = new LocalTrelloSettings();
         private bool firstRun = true;
         private bool trelloIsValid = false;
 
@@ -58,7 +59,7 @@ namespace QuickTrello
                 name = txtTitle.Text
                 , desc = txtDescription.Text
             };
-            var res = tb.AddCard(card, defaultlist);
+            var res = tb.AddCard(card, settings.TargetListId);
             if (res.Successful) {
                 ShowFeedback("New card created successfully!", MessageType.Success);
             } else {
@@ -70,21 +71,37 @@ namespace QuickTrello
 
         private void ValidateTrello()
         {
-            if (key == null) {
+            FindFirstValidTrelloSettings();
+            if (settings.ApiKey == null) {
                 ShowFeedback("Missing API Key", MessageType.Error);
-            } else if (token == null) {
+            } else if (settings.ApiToken == null) {
                 ShowFeedback("Missing API Token", MessageType.Error);
-            } else if (defaultlist == null) {
-                ShowFeedback("Default List has not been set", MessageType.Error);
+            } else if (settings.TargetListId == null) {
+                ShowFeedback("Target List has not been set", MessageType.Error);
             } else {
                 trelloIsValid = true;
+            }
+        }
+
+        private void FindFirstValidTrelloSettings()
+        {
+            var temptoken = ConfigurationManager.AppSettings["trelloapitoken"];
+            var tempkey = ConfigurationManager.AppSettings["trelloapikey"];
+            var temptargetlist = ConfigurationManager.AppSettings["targetlist"];
+            if (temptoken != null && tempkey != null && temptargetlist != null) {
+                settings.ApiKey = tempkey;
+                settings.ApiToken = temptoken;
+                settings.TargetListId = temptargetlist;
+            } else if (File.Exists(settingsFile)) {
+                var existing = File.ReadAllText(settingsFile);
+                settings = JsonConvert.DeserializeObject<LocalTrelloSettings>(existing);
             }
         }
 
         private TrelloBase FireUpTrello()
         {
             var tb = TrelloBase.GetInstance();
-            tb.Init(key, token);
+            tb.Init(settings.ApiKey, settings.ApiToken);
             return tb;
         }
 
@@ -186,6 +203,12 @@ namespace QuickTrello
             lblResult.ForeColor = fClr;
             lblResult.BackColor = bClr;
             this.Refresh();
+        }
+
+        private void BtnSettings_Click(object sender, EventArgs e)
+        {
+            Settings settings = new Settings();
+            settings.Show();
         }
     }
 

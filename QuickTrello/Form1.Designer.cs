@@ -37,6 +37,8 @@
             this.lblAttachments = new System.Windows.Forms.Label();
             this.pnlAttachments = new System.Windows.Forms.Panel();
             this.lblResult = new System.Windows.Forms.Label();
+            this.btnSettings = new System.Windows.Forms.PictureBox();
+            ((System.ComponentModel.ISupportInitialize)(this.btnSettings)).BeginInit();
             this.SuspendLayout();
             // 
             // label1
@@ -139,8 +141,19 @@
             this.lblResult.ForeColor = System.Drawing.Color.Black;
             this.lblResult.Location = new System.Drawing.Point(12, 9);
             this.lblResult.Name = "lblResult";
-            this.lblResult.Size = new System.Drawing.Size(443, 18);
+            this.lblResult.Size = new System.Drawing.Size(415, 18);
             this.lblResult.TabIndex = 9;
+            // 
+            // btnSettings
+            // 
+            this.btnSettings.Image = ((System.Drawing.Image)(resources.GetObject("btnSettings.Image")));
+            this.btnSettings.Location = new System.Drawing.Point(433, 9);
+            this.btnSettings.Name = "btnSettings";
+            this.btnSettings.Size = new System.Drawing.Size(22, 22);
+            this.btnSettings.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.btnSettings.TabIndex = 10;
+            this.btnSettings.TabStop = false;
+            this.btnSettings.Click += new System.EventHandler(this.BtnSettings_Click);
             // 
             // MainForm
             // 
@@ -148,6 +161,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(467, 465);
+            this.Controls.Add(this.btnSettings);
             this.Controls.Add(this.lblResult);
             this.Controls.Add(this.pnlAttachments);
             this.Controls.Add(this.lblAttachments);
@@ -161,6 +175,7 @@
             this.Name = "MainForm";
             this.Text = "Quick Trello";
             this.Load += new System.EventHandler(this.MainForm_Load);
+            ((System.ComponentModel.ISupportInitialize)(this.btnSettings)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -177,6 +192,7 @@
         private System.Windows.Forms.Label lblAttachments;
         private System.Windows.Forms.Panel pnlAttachments;
         private System.Windows.Forms.Label lblResult;
+        private System.Windows.Forms.PictureBox btnSettings;
     }
 }
 
