@@ -10,7 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using TrelloUtility;
+using TrelloConnect;
 
 namespace QuickTrello
 {
@@ -55,17 +55,24 @@ namespace QuickTrello
             }
             ShowFeedback("Submitting...");
             var tb = FireUpTrello();
-            var card = new TrelloCard() {
-                name = txtTitle.Text
-                , desc = txtDescription.Text
-            };
-            var res = tb.AddCard(card, settings.TargetListId);
-            if (res.Successful) {
-                ShowFeedback("New card created successfully!", MessageType.Success);
+
+            // check desc for link
+            var cardId = "";
+            if (txtDescription.Text.StartsWith("http")) {
+                var card = tb.CreateCard(settings.TargetListId, txtTitle.Text, null);
+                tb.AttachUrlToCard(txtDescription.Text, card.Id);
+                cardId = card.Id;
             } else {
-                ShowFeedback("Failed to create new card.", MessageType.Error);
+                var card = tb.CreateCard(settings.TargetListId, txtTitle.Text, txtDescription.Text);
+                cardId = card.Id;
             }
-            System.Threading.Thread.Sleep(3000);
+            var labels = txtLabels.Text.Replace(" ", "");
+            var lbls = labels.Split(',');
+            if (lbls.Count() > 0) {
+                tb.AddLablesToCardByNameArray(cardId, lbls);
+            }
+            ShowFeedback("New card created successfully!", MessageType.Success);
+            System.Threading.Thread.Sleep(1000);
             this.Close();
         }
 
@@ -98,10 +105,9 @@ namespace QuickTrello
             }
         }
 
-        private TrelloBase FireUpTrello()
+        private Trello.TrelloWorker FireUpTrello()
         {
-            var tb = TrelloBase.GetInstance();
-            tb.Init(settings.ApiKey, settings.ApiToken);
+            var tb = new Trello.TrelloWorker(settings.ApiKey, settings.ApiToken);
             return tb;
         }
 
@@ -120,7 +126,7 @@ namespace QuickTrello
         private void ShowAttachments(bool show = true)
         {
             lblAttachments.Visible = show;
-            pnlAttachments.Visible = show;
+            pnlFileAttachments.Visible = show;
         }
 
         private void CheckForCtrlEnter(object sender, KeyEventArgs e)
@@ -209,6 +215,11 @@ namespace QuickTrello
         {
             Settings settings = new Settings();
             settings.Show();
+        }
+
+        private void pnlFileAttachments_DragDrop(object sender, DragEventArgs e)
+        {
+            MessageBox.Show("Dropped " + e.Data);
         }
     }
 

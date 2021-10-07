@@ -35,7 +35,7 @@
             this.lblLabels = new System.Windows.Forms.Label();
             this.txtLabels = new System.Windows.Forms.TextBox();
             this.lblAttachments = new System.Windows.Forms.Label();
-            this.pnlAttachments = new System.Windows.Forms.Panel();
+            this.pnlFileAttachments = new System.Windows.Forms.Panel();
             this.lblResult = new System.Windows.Forms.Label();
             this.btnSettings = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.btnSettings)).BeginInit();
@@ -116,21 +116,22 @@
             this.lblAttachments.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblAttachments.Location = new System.Drawing.Point(12, 330);
             this.lblAttachments.Name = "lblAttachments";
-            this.lblAttachments.Size = new System.Drawing.Size(90, 18);
+            this.lblAttachments.Size = new System.Drawing.Size(117, 18);
             this.lblAttachments.TabIndex = 6;
-            this.lblAttachments.Text = "Attachments";
+            this.lblAttachments.Text = "File Attachments";
             // 
-            // pnlAttachments
+            // pnlFileAttachments
             // 
-            this.pnlAttachments.AllowDrop = true;
-            this.pnlAttachments.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.pnlFileAttachments.AllowDrop = true;
+            this.pnlFileAttachments.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.pnlAttachments.BackColor = System.Drawing.Color.Gainsboro;
-            this.pnlAttachments.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pnlAttachments.Location = new System.Drawing.Point(12, 349);
-            this.pnlAttachments.Name = "pnlAttachments";
-            this.pnlAttachments.Size = new System.Drawing.Size(440, 100);
-            this.pnlAttachments.TabIndex = 7;
+            this.pnlFileAttachments.BackColor = System.Drawing.Color.Gainsboro;
+            this.pnlFileAttachments.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pnlFileAttachments.Location = new System.Drawing.Point(12, 349);
+            this.pnlFileAttachments.Name = "pnlFileAttachments";
+            this.pnlFileAttachments.Size = new System.Drawing.Size(440, 100);
+            this.pnlFileAttachments.TabIndex = 7;
+            this.pnlFileAttachments.DragDrop += new System.Windows.Forms.DragEventHandler(this.pnlFileAttachments_DragDrop);
             // 
             // lblResult
             // 
@@ -163,7 +164,7 @@
             this.ClientSize = new System.Drawing.Size(467, 465);
             this.Controls.Add(this.btnSettings);
             this.Controls.Add(this.lblResult);
-            this.Controls.Add(this.pnlAttachments);
+            this.Controls.Add(this.pnlFileAttachments);
             this.Controls.Add(this.lblAttachments);
             this.Controls.Add(this.txtLabels);
             this.Controls.Add(this.lblLabels);
@@ -190,7 +191,7 @@
         private System.Windows.Forms.Label lblLabels;
         private System.Windows.Forms.TextBox txtLabels;
         private System.Windows.Forms.Label lblAttachments;
-        private System.Windows.Forms.Panel pnlAttachments;
+        private System.Windows.Forms.Panel pnlFileAttachments;
         private System.Windows.Forms.Label lblResult;
         private System.Windows.Forms.PictureBox btnSettings;
     }

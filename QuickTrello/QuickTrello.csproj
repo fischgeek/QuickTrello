@@ -36,6 +36,12 @@
     <ApplicationIcon>trello.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="FSharp.Core, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\FSharp.Core.6.0.0\lib\netstandard2.0\FSharp.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="FSharp.Data, Version=4.2.3.0, Culture=neutral, PublicKeyToken=49286adf818aa259, processorArchitecture=MSIL">
+      <HintPath>..\packages\FSharp.Data.4.2.3\lib\netstandard2.0\FSharp.Data.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -99,9 +105,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\TrelloUtility\TrelloUtility.csproj">
-      <Project>{ce193d00-27b5-4642-ade8-7a4beda7cd8d}</Project>
-      <Name>TrelloUtility</Name>
+    <ProjectReference Include="..\..\TrelloConnect\TrelloConnect\TrelloConnect.fsproj">
+      <Project>{929ec4d1-f077-490f-9da3-9708ed275b2a}</Project>
+      <Name>TrelloConnect</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
