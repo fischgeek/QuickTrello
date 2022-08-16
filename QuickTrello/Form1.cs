@@ -20,10 +20,12 @@ namespace QuickTrello
         LocalTrelloSettings settings = new LocalTrelloSettings();
         private bool firstRun = true;
         private bool trelloIsValid = false;
+        private Form mainForm;
 
         public MainForm()
         {
             InitializeComponent();
+            this.mainForm = this;
             txtTitle.KeyDown += new KeyEventHandler(CheckForCtrlEnter);
             txtTitle.KeyUp += new KeyEventHandler(CheckTitleForTab);
             txtTitle.KeyPress += new KeyPressEventHandler(Silence);
@@ -34,6 +36,14 @@ namespace QuickTrello
             txtLabels.KeyUp += new KeyEventHandler(CheckLabelsForTab);
             txtLabels.KeyPress += new KeyPressEventHandler(Silence);
             this.KeyDown += new KeyEventHandler(CheckForCtrlEnter);
+
+            //this.Opacity = 0;
+            this.StartPosition = FormStartPosition.Manual;
+            var startX =
+                (Screen.PrimaryScreen.Bounds.Width / 2) -
+                (this.Size.Width / 2);
+            this.Location = new Point(startX, 0);
+            
             AdjustHeight(HeightStep.One);
         }
 
@@ -59,21 +69,21 @@ namespace QuickTrello
             // check desc for link
             var cardId = "";
             if (txtDescription.Text.StartsWith("http")) {
-                var card = tb.CreateCard(settings.TargetListId, txtTitle.Text, null);
+                var card = tb.CreateCard(settings.TargetListId, txtTitle.Text, null, null, null);
                 tb.AttachUrlToCard(txtDescription.Text, card.Id);
                 cardId = card.Id;
             } else {
-                var card = tb.CreateCard(settings.TargetListId, txtTitle.Text, txtDescription.Text);
+                var card = tb.CreateCard(settings.TargetListId, txtTitle.Text, txtDescription.Text, null, null);
                 cardId = card.Id;
             }
-            var labels = txtLabels.Text.Replace(" ", "");
-            var lbls = labels.Split(',');
-            if (lbls.Count() > 0) {
+            if (!string.IsNullOrWhiteSpace(txtLabels.Text)) {
+                var labels = txtLabels.Text.Replace(" ", "");
+                var lbls = labels.Split(',');
                 tb.AddLablesToCardByNameArray(cardId, lbls);
             }
+            tb.UpdateCard(cardId, null, null, "1");
             ShowFeedback("New card created successfully!", MessageType.Success);
-            System.Threading.Thread.Sleep(1000);
-            this.Close();
+            Fader.FadeOutAndClose(mainForm, Fader.FadeSpeed.Slow);
         }
 
         private void ValidateTrello()
@@ -220,6 +230,11 @@ namespace QuickTrello
         private void pnlFileAttachments_DragDrop(object sender, DragEventArgs e)
         {
             MessageBox.Show("Dropped " + e.Data);
+        }
+
+        private void MainForm_Shown(object sender, EventArgs e)
+        {
+            //Fader.FadeIn(this, Fader.FadeSpeed.Slow);
         }
     }
 

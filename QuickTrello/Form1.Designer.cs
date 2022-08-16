@@ -176,6 +176,7 @@
             this.Name = "MainForm";
             this.Text = "Quick Trello";
             this.Load += new System.EventHandler(this.MainForm_Load);
+            this.Shown += new System.EventHandler(this.MainForm_Shown);
             ((System.ComponentModel.ISupportInitialize)(this.btnSettings)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
